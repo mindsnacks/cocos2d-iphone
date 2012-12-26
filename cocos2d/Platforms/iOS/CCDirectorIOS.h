@@ -251,6 +251,7 @@ typedef enum {
 @end
 
 // optimization. Should only be used to read it. Never to write it.
-extern CGFloat	__ccContentScaleFactor;
+extern CGFloat	__ccOSScaleFactor;
+extern CGFloat	__ccSoftScaleFactor;
 
 #endif // __IPHONE_OS_VERSION_MAX_ALLOWED

@@ -233,7 +233,9 @@ do {															\
  On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
  */
 #import "Platforms/iOS/CCDirectorIOS.h"
-#define CC_CONTENT_SCALE_FACTOR() __ccContentScaleFactor
+#define CC_OS_SCALE_FACTOR() __ccOSScaleFactor
+#define CC_SOFT_SCALE_FACTOR() __ccSoftScaleFactor
+#define CC_CONTENT_SCALE_FACTOR() (__ccOSScaleFactor * __ccSoftScaleFactor)
 
 
 /** @def CC_RECT_PIXELS_TO_POINTS
