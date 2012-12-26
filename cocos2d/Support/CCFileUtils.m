@@ -85,10 +85,26 @@ NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out)
 
 @implementation CCFileUtils
 
+static NSBundle* g_defaultBundle;
+
 +(void) initialize
 {
 	if( self == [CCFileUtils class] )
+    {
 		__localFileManager = [[NSFileManager alloc] init];
+        g_defaultBundle = [[NSBundle mainBundle] retain];
+    }
+}
+
++ (void) setDefaultBundle:(NSBundle*) bundle
+{
+    [g_defaultBundle autorelease];
+    g_defaultBundle = [bundle retain];
+}
+
++ (NSBundle*) defaultBundle
+{
+    return g_defaultBundle;
 }
 
 +(NSString*) getPath:(NSString*)path forSuffix:(NSString*)suffix
@@ -126,7 +142,7 @@ NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out)
 		return newName;
     else
     {//try it with full bundle path
-        newName = [NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] bundlePath], newName];
+        newName = [NSString stringWithFormat:@"%@/%@", [g_defaultBundle bundlePath], newName];
         if( [__localFileManager fileExistsAtPath:newName] )
             return newName;
     }
@@ -149,9 +165,9 @@ NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out)
 		NSString *file = [relPath lastPathComponent];
 		NSString *imageDirectory = [relPath stringByDeletingLastPathComponent];
 
-		fullpath = [[NSBundle mainBundle] pathForResource:file
-												   ofType:nil
-											  inDirectory:imageDirectory];
+		fullpath = [g_defaultBundle pathForResource:file
+                                             ofType:nil
+                                        inDirectory:imageDirectory];
 
 
 	}
@@ -309,9 +325,9 @@ NSInteger ccLoadFileIntoMemory(const char *filename, unsigned char **out)
 		NSString *file = [relPath lastPathComponent];
 		NSString *imageDirectory = [relPath stringByDeletingLastPathComponent];
 
-		fullpath = [[NSBundle mainBundle] pathForResource:file
-												   ofType:nil
-											  inDirectory:imageDirectory];
+		fullpath = [g_defaultBundle pathForResource:file
+                                             ofType:nil
+                                        inDirectory:imageDirectory];
 
 	}
 
