@@ -33,6 +33,18 @@
 {
 }
 
+/** Set the default bundle to use when looking up paths.
+ *
+ * @param bundle The new default bundle.
+ */
++ (void) setDefaultBundle:(NSBundle*) bundle;
+
+/** The default bundle used when looking up paths.
+ *
+ * return The default bundle.
+ */
++ (NSBundle*) defaultBundle;
+
 /** Returns the fullpath of an filename.
 
  If in RetinaDisplay mode, and a RetinaDisplay file is found, it will return that path.

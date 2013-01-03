@@ -56,7 +56,10 @@
 #pragma mark -
 #pragma mark Director - global variables (optimization)
 
-CGFloat	__ccContentScaleFactor = 1;
+// Scaling hinted by the OS.
+CGFloat	__ccOSScaleFactor = 1;
+// Extra scaling applied by Cocos2d for iPad (multiplicative)
+CGFloat	__ccSoftScaleFactor = 1;
 
 #pragma mark -
 #pragma mark Director iOS
@@ -125,7 +128,8 @@ CGFloat	__ccContentScaleFactor = 1;
 		// portrait mode default
 		deviceOrientation_ = CCDeviceOrientationPortrait;
 
-		__ccContentScaleFactor = 1;
+		__ccOSScaleFactor = 1;
+		__ccSoftScaleFactor = 1;
 		isContentScaleSupported_ = NO;
 
 		// running thread is main thread on iOS
@@ -253,9 +257,10 @@ CGFloat	__ccContentScaleFactor = 1;
 		[super setOpenGLView:view];
 
 		// set size
-		winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * __ccContentScaleFactor, winSizeInPoints_.height *__ccContentScaleFactor);
+		winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * __ccSoftScaleFactor,
+                                      winSizeInPoints_.height *__ccSoftScaleFactor);
 
-		if( __ccContentScaleFactor != 1 )
+		if( CC_CONTENT_SCALE_FACTOR() != 1 )
 			[self updateContentScaleFactor];
 
 		CCTouchDispatcher *touchDispatcher = [CCTouchDispatcher sharedDispatcher];
@@ -268,19 +273,21 @@ CGFloat	__ccContentScaleFactor = 1;
 
 -(CGFloat) contentScaleFactor
 {
-	return __ccContentScaleFactor;
+	return CC_CONTENT_SCALE_FACTOR();
 }
 
--(void) setContentScaleFactor:(CGFloat)scaleFactor
+-(void) setOSScaleFactor:(CGFloat) osScaleFactor softScaleFactor:(CGFloat) softScaleFactor
 {
-	if( scaleFactor != __ccContentScaleFactor ) {
-
-		__ccContentScaleFactor = scaleFactor;
-		winSizeInPixels_ = CGSizeMake( winSizeInPoints_.width * scaleFactor, winSizeInPoints_.height * scaleFactor );
-
+	if( osScaleFactor != __ccOSScaleFactor || softScaleFactor != __ccSoftScaleFactor )
+    {
+		__ccOSScaleFactor = osScaleFactor;
+        __ccSoftScaleFactor = softScaleFactor;
+		winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * CC_CONTENT_SCALE_FACTOR(),
+                                      winSizeInPoints_.height * CC_CONTENT_SCALE_FACTOR() );
+		
 		if( openGLView_ )
 			[self updateContentScaleFactor];
-
+		
 		// update projection
 		[self setProjection:projection_];
 	}
@@ -291,9 +298,9 @@ CGFloat	__ccContentScaleFactor = 1;
 	// Based on code snippet from: http://developer.apple.com/iphone/prerelease/library/snippets/sp2010/sp28.html
 	if ([openGLView_ respondsToSelector:@selector(setContentScaleFactor:)])
 	{
-		[openGLView_ setContentScaleFactor: __ccContentScaleFactor];
+		[openGLView_ setContentScaleFactor: __ccOSScaleFactor];
 
-		isContentScaleSupported_ = YES;
+		isContentScaleSupported_ = __ccOSScaleFactor > 1;
 	}
 	else
 	{
@@ -304,34 +311,28 @@ CGFloat	__ccContentScaleFactor = 1;
 
 -(BOOL) enableRetinaDisplay:(BOOL)enabled
 {
-	// Already enabled ?
-	if( enabled && __ccContentScaleFactor == 2 )
-		return YES;
-
-	// Already disabled
-	if( ! enabled && __ccContentScaleFactor == 1 )
-		return YES;
-
-	// setContentScaleFactor is not supported
-	if (! [openGLView_ respondsToSelector:@selector(setContentScaleFactor:)])
-		return NO;
-
-	// SD device
-	if ([[UIScreen mainScreen] scale] == 1.0)
-		return NO;
-
-	float newScale = enabled ? 2 : 1;
-	[self setContentScaleFactor:newScale];
-
+    float osScale = [[UIScreen mainScreen] scale];
+    float softScale = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 2 : 1;
+    
+    if(osScale * softScale == 1)
+    {
+        return NO;
+    }
+    
+    [self setOSScaleFactor:osScale softScaleFactor:softScale];
+	
 	return YES;
 }
 
 // overriden, don't call super
 -(void) reshapeProjection:(CGSize)size
 {
-	winSizeInPoints_ = [openGLView_ bounds].size;
-	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * __ccContentScaleFactor, winSizeInPoints_.height *__ccContentScaleFactor);
-
+    size = [openGLView_ bounds].size;
+	winSizeInPoints_ = CGSizeMake(size.width / __ccSoftScaleFactor,
+                                  size.height / __ccSoftScaleFactor);
+	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * CC_CONTENT_SCALE_FACTOR(),
+                                  winSizeInPoints_.height * CC_CONTENT_SCALE_FACTOR());
+	
 	[self setProjection:projection_];
 }
 
@@ -339,6 +340,8 @@ CGFloat	__ccContentScaleFactor = 1;
 
 -(CGPoint)convertToGL:(CGPoint)uiPoint
 {
+    uiPoint = ccp(uiPoint.x / __ccSoftScaleFactor,
+                  uiPoint.y / __ccSoftScaleFactor);
 	CGSize s = winSizeInPoints_;
 	float newY = s.height - uiPoint.y;
 	float newX = s.width - uiPoint.x;
@@ -384,7 +387,8 @@ CGFloat	__ccContentScaleFactor = 1;
 			uiPoint = ccp(winSize.width-glPoint.y, winSize.height-glPoint.x);
 			break;
 	}
-	return uiPoint;
+	return ccp(uiPoint.x * __ccSoftScaleFactor,
+               uiPoint.y * __ccSoftScaleFactor);
 }
 
 // get the current size of the glview

@@ -502,25 +502,39 @@ static CCScheduler *sharedScheduler;
 
 -(void) unscheduleAllSelectors
 {
+    [self unscheduleAllSelectorsWithMinPriority:kCCPrioritySystem];
+}
+
+-(void) unscheduleAllSelectorsWithMinPriority:(NSInteger)minPriority
+{
 	// Custom Selectors
 	for(tHashSelectorEntry *element=hashForSelectors; element != NULL; ) {
 		id target = element->target;
 		element=element->hh.next;
 		[self unscheduleAllSelectorsForTarget:target];
 	}
-
+    
 	// Updates selectors
 	tListEntry *entry, *tmp;
-	DL_FOREACH_SAFE( updates0, entry, tmp ) {
-		[self unscheduleUpdateForTarget:entry->target];
-	}
-	DL_FOREACH_SAFE( updatesNeg, entry, tmp ) {
-		[self unscheduleUpdateForTarget:entry->target];
-	}
-	DL_FOREACH_SAFE( updatesPos, entry, tmp ) {
-		[self unscheduleUpdateForTarget:entry->target];
-	}
-
+    if(minPriority < 0) {
+        DL_FOREACH_SAFE( updatesNeg, entry, tmp ) {
+            if(entry->priority >= minPriority) {
+                [self unscheduleUpdateForTarget:entry->target];
+            }
+        }
+    }
+    if(minPriority <= 0) {
+        DL_FOREACH_SAFE( updates0, entry, tmp ) {
+            if(entry->priority >= minPriority) {
+                [self unscheduleUpdateForTarget:entry->target];
+            }
+        }
+    }
+    DL_FOREACH_SAFE( updatesPos, entry, tmp ) {
+        if(entry->priority >= minPriority) {
+            [self unscheduleUpdateForTarget:entry->target];
+        }
+    }
 }
 
 -(void) unscheduleAllSelectorsForTarget:(id)target
@@ -601,6 +615,56 @@ static CCScheduler *sharedScheduler;
     }
     return NO;  // should never get here
 
+}
+
+-(NSSet*) pauseAllSelectors
+{
+    return [self pauseAllSelectorsWithMinPriority:kCCPrioritySystem];
+}
+
+-(NSSet*) pauseAllSelectorsWithMinPriority:(NSInteger)minPriority
+{
+	NSMutableSet* idsWithSelectors = [NSMutableSet setWithCapacity:50];
+	
+	// Custom Selectors
+	for(tHashSelectorEntry *element=hashForSelectors; element != NULL; element=element->hh.next) {
+		element->paused = YES;
+		[idsWithSelectors addObject:element->target];
+	}
+	
+	// Updates selectors
+	tListEntry *entry, *tmp;
+    if(minPriority < 0) {
+        DL_FOREACH_SAFE( updates0, entry, tmp ) {
+            if(entry->priority >= minPriority) {
+                entry->paused = YES;
+                [idsWithSelectors addObject:entry->target];
+            }
+        }
+    }
+    if(minPriority <= 0) {
+        DL_FOREACH_SAFE( updatesNeg, entry, tmp ) {
+            if(entry->priority >= minPriority) {
+                entry->paused = YES;
+                [idsWithSelectors addObject:entry->target];
+            }
+        }
+    }
+	DL_FOREACH_SAFE( updatesPos, entry, tmp ) {
+        if(entry->priority >= minPriority) {
+            entry->paused = YES;
+            [idsWithSelectors addObject:entry->target];
+        }
+	}
+	
+	return idsWithSelectors;
+}
+
+-(void) resumeTargets:(NSSet *)targetsToResume
+{
+	for(id target in targetsToResume) {
+		[self resumeTarget:target];
+	}
 }
 
 #pragma mark CCScheduler - Main Loop
