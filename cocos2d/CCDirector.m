@@ -212,6 +212,11 @@ static CCDirector *_sharedDirector = nil;
 #endif	// CC_DIRECTOR_FAST_FPS
 }
 
+- (BOOL) canRender
+{
+    return YES;
+}
+
 //
 // Draw the Scene
 //

@@ -189,6 +189,9 @@ and when to execute the Scenes.
  */
 @property (nonatomic, readwrite, retain) id<CCProjectionProtocol> projectionDelegate;
 
+/** IF true, the director is capable of rendering a frame. */
+@property (nonatomic,readonly) BOOL canRender;
+
 /** returns a shared instance of the director */
 +(CCDirector *)sharedDirector;
 

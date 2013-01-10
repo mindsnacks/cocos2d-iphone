@@ -149,6 +149,11 @@ CGFloat	__ccSoftScaleFactor = 1;
 //
 - (void) drawScene
 {
+    if( !self.canRender )
+    {
+        return;
+    }
+
 	/* calculate "global" dt */
 	[self calculateDeltaTime];
 
@@ -516,6 +521,11 @@ CGFloat	__ccSoftScaleFactor = 1;
 	//								 forMode:NSRunLoopCommonModes];
 }
 
+- (BOOL) canRender
+{
+    return animationTimer != nil;
+}
+
 -(void) mainLoop
 {
 	[self drawScene];
@@ -607,6 +617,11 @@ CGFloat	__ccSoftScaleFactor = 1;
 //								 waitUntilDone:NO];
 }
 
+- (BOOL) canRender
+{
+    return isRunning;
+}
+
 -(void) mainLoop
 {
 	while (isRunning) {
@@ -672,6 +687,11 @@ CGFloat	__ccSoftScaleFactor = 1;
 	NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(mainLoop) object:nil];
 	[thread start];
 	[thread release];
+}
+
+- (BOOL) canRender
+{
+    return isRunning;
 }
 
 -(void) mainLoop
@@ -741,6 +761,11 @@ CGFloat	__ccSoftScaleFactor = 1;
             	[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     else
         [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+}
+
+- (BOOL) canRender
+{
+    return displayLink != nil;
 }
 
 -(void) mainLoop:(id)sender
