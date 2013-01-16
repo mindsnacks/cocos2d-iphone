@@ -132,14 +132,15 @@ typedef enum {
  */
 -(void) setContentScaleFactor:(CGFloat)scaleFactor;
 
-/** Will enable Retina Display on devices that supports it.
- It will enable Retina Display on iPhone4 and iPod Touch 4.
- It will return YES, if it could enabled it, otherwise it will return NO.
+/** Will enable Retina scaling and ipad soft scaling on devices that supports it.
+ Soft scaling will treat an ipad as if it had 384x512 addressable points, making it easier
+ to write games that display essentially the same thing on iPad and iPhone devices.
+ It will return YES if the scale is now > 1, otherwise it will return NO.
 
  This is the recommened way to enable Retina Display.
  @since v0.99.5
  */
--(BOOL) enableRetinaDisplay:(BOOL)enable;
+-(BOOL) enableRetinaDisplay:(BOOL)retinaScaling ipad2xSoftScaling:(BOOL)ipadSoftScaling;
 
 /** returns the content scale factor */
 -(CGFloat) contentScaleFactor;

@@ -251,18 +251,27 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 #pragma mark Director Integration with a UIKit view
 
+-(void) updateWinSize
+{
+    if( openGLView_ )
+    {
+        CGSize size = [openGLView_ bounds].size;
+        winSizeInPoints_ = CGSizeMake(size.width / CC_SOFT_SCALE_FACTOR(),
+                                      size.height / CC_SOFT_SCALE_FACTOR());
+    }
+	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * CC_CONTENT_SCALE_FACTOR(),
+                                  winSizeInPoints_.height * CC_CONTENT_SCALE_FACTOR());
+}
+
 -(void) setOpenGLView:(EAGLView *)view
 {
 	if( view != openGLView_ ) {
 
 		[super setOpenGLView:view];
 
-		// set size
-		winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * __ccSoftScaleFactor,
-                                      winSizeInPoints_.height *__ccSoftScaleFactor);
+        [self updateWinSize];
 
-		if( CC_CONTENT_SCALE_FACTOR() != 1 )
-			[self updateContentScaleFactor];
+        [self updateContentScaleFactor];
 
 		CCTouchDispatcher *touchDispatcher = [CCTouchDispatcher sharedDispatcher];
 		[openGLView_ setTouchDelegate: touchDispatcher];
@@ -283,8 +292,8 @@ CGFloat	__ccSoftScaleFactor = 1;
     {
 		__ccOSScaleFactor = osScaleFactor;
         __ccSoftScaleFactor = softScaleFactor;
-		winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * CC_CONTENT_SCALE_FACTOR(),
-                                      winSizeInPoints_.height * CC_CONTENT_SCALE_FACTOR() );
+
+        [self updateWinSize];
 		
 		if( openGLView_ )
 			[self updateContentScaleFactor];
@@ -310,30 +319,20 @@ CGFloat	__ccSoftScaleFactor = 1;
 	}
 }
 
--(BOOL) enableRetinaDisplay:(BOOL)enabled
+-(BOOL) enableRetinaDisplay:(BOOL)retinaScaling ipad2xSoftScaling:(BOOL)ipadSoftScaling
 {
-    float osScale = [[UIScreen mainScreen] scale];
-    float softScale = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 2 : 1;
-    
-    if(osScale * softScale == 1)
-    {
-        return NO;
-    }
+    float osScale = retinaScaling ? [[UIScreen mainScreen] scale] : 1;
+    float softScale = (ipadSoftScaling && (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)) ? 2 : 1;
     
     [self setOSScaleFactor:osScale softScaleFactor:softScale];
 	
-	return YES;
+	return osScale * softScale > 1;
 }
 
 // overriden, don't call super
 -(void) reshapeProjection:(CGSize)size
 {
-    size = [openGLView_ bounds].size;
-	winSizeInPoints_ = CGSizeMake(size.width / __ccSoftScaleFactor,
-                                  size.height / __ccSoftScaleFactor);
-	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * CC_CONTENT_SCALE_FACTOR(),
-                                  winSizeInPoints_.height * CC_CONTENT_SCALE_FACTOR());
-	
+    [self updateWinSize];
 	[self setProjection:projection_];
 }
 
@@ -341,8 +340,8 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 -(CGPoint)convertToGL:(CGPoint)uiPoint
 {
-    uiPoint = ccp(uiPoint.x / __ccSoftScaleFactor,
-                  uiPoint.y / __ccSoftScaleFactor);
+    uiPoint.x /= CC_SOFT_SCALE_FACTOR();
+    uiPoint.y /= CC_SOFT_SCALE_FACTOR();
 	CGSize s = winSizeInPoints_;
 	float newY = s.height - uiPoint.y;
 	float newX = s.width - uiPoint.x;
@@ -388,8 +387,9 @@ CGFloat	__ccSoftScaleFactor = 1;
 			uiPoint = ccp(winSize.width-glPoint.y, winSize.height-glPoint.x);
 			break;
 	}
-	return ccp(uiPoint.x * __ccSoftScaleFactor,
-               uiPoint.y * __ccSoftScaleFactor);
+    uiPoint.x *= CC_SOFT_SCALE_FACTOR();
+    uiPoint.y *= CC_SOFT_SCALE_FACTOR();
+    return uiPoint;
 }
 
 // get the current size of the glview
