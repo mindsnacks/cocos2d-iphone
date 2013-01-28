@@ -50,7 +50,7 @@ typedef enum {
 	// backward compatibility stuff
 	CCDirectorProjection2D = kCCDirectorProjection2D,
 	CCDirectorProjection3D = kCCDirectorProjection3D,
-	CCDirectorProjectionCustom = kCCDirectorProjectionCustom,
+	CCDirectorProjectionCustom = kCCDirectorProjectionCustom
 
 } ccDirectorProjection;
 

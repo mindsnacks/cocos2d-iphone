@@ -36,7 +36,7 @@
 #import "Support/CCArray.h"
 
 enum {
-	kCCNodeTagInvalid = -1,
+	kCCNodeTagInvalid = -1
 };
 
 @class CCCamera;

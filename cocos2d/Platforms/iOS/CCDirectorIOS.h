@@ -48,7 +48,7 @@ typedef enum {
 	CCDeviceOrientationPortrait = kCCDeviceOrientationPortrait,
 	CCDeviceOrientationPortraitUpsideDown = kCCDeviceOrientationPortraitUpsideDown,
 	CCDeviceOrientationLandscapeLeft = kCCDeviceOrientationLandscapeLeft,
-	CCDeviceOrientationLandscapeRight = kCCDeviceOrientationLandscapeRight,
+	CCDeviceOrientationLandscapeRight = kCCDeviceOrientationLandscapeRight
 } ccDeviceOrientation;
 
 /** @typedef ccDirectorType
@@ -102,7 +102,7 @@ typedef enum {
 	CCDirectorTypeMainLoop = kCCDirectorTypeMainLoop,
 	CCDirectorTypeThreadMainLoop = kCCDirectorTypeThreadMainLoop,
 	CCDirectorTypeDisplayLink = kCCDirectorTypeDisplayLink,
-	CCDirectorTypeDefault = kCCDirectorTypeDefault,
+	CCDirectorTypeDefault = kCCDirectorTypeDefault
 
 
 } ccDirectorType;

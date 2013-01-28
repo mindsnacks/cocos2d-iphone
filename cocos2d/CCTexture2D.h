@@ -102,7 +102,7 @@ typedef enum {
 	kCCTexture2DPixelFormat_PVRTC2,
 
 	//! Default texture format: RGBA8888
-	kCCTexture2DPixelFormat_Default = kCCTexture2DPixelFormat_RGBA8888,
+	kCCTexture2DPixelFormat_Default = kCCTexture2DPixelFormat_RGBA8888
 
 } CCTexture2DPixelFormat;
 
@@ -110,7 +110,7 @@ typedef enum
 {
     CCVerticalAlignmentTop,
     CCVerticalAlignmentCenter,
-    CCVerticalAlignmentBottom,
+    CCVerticalAlignmentBottom
 } CCVerticalAlignment;
 
 //CLASS INTERFACES:

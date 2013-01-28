@@ -318,7 +318,7 @@ typedef enum
     //! iPad resolution type
     kCCResolutioniPad,
     //! iPad Retina Display resolution type
-    kCCResolutioniPadRetinaDisplay,
+    kCCResolutioniPadRetinaDisplay
 
 } ccResolutionType;
 
