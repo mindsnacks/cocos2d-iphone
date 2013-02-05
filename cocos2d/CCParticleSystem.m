@@ -350,8 +350,6 @@
 
 -(void) dealloc
 {
-	[self unscheduleUpdate];
-
 	free( particles );
 
 	if (animationFrameData_)
