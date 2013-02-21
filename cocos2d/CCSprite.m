@@ -246,6 +246,8 @@ static SEL selSortMethod = NULL;
 	NSAssert(spriteFrameName!=nil, @"Invalid spriteFrameName for sprite");
 
 	CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:spriteFrameName];
+    NSAssert(frame != nil, @"Frame not found for sprite frame name: %@", spriteFrameName);
+    
 	return [self initWithSpriteFrame:frame];
 }
 
