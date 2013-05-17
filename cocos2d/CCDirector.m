@@ -184,7 +184,7 @@ static CCDirector *_sharedDirector = nil;
 -(void) setGLDefaultValues
 {
 	// This method SHOULD be called only after openGLView_ was initialized
-	NSAssert( openGLView_, @"openGLView_ must be initialized");
+	//NSAssert( openGLView_, @"openGLView_ must be initialized");
 
 	[self setAlphaBlending: YES];
 
@@ -308,16 +308,18 @@ static CCDirector *_sharedDirector = nil;
 
 -(void) setOpenGLView:(CC_GLVIEW *)view
 {
-	NSAssert( view, @"OpenGLView must be non-nil");
+	//NSAssert( view, @"OpenGLView must be non-nil");
 
 	if( view != openGLView_ ) {
 		[openGLView_ release];
 		openGLView_ = [view retain];
-
-		// set size
-		winSizeInPixels_ = winSizeInPoints_ = CCNSSizeToCGSize( [view bounds].size );
-
-		[self setGLDefaultValues];
+        if (openGLView_ != nil)
+        {
+            // set size
+            winSizeInPixels_ = winSizeInPoints_ = CCNSSizeToCGSize( [view bounds].size );
+            
+            [self setGLDefaultValues];
+        }
 	}
 }
 

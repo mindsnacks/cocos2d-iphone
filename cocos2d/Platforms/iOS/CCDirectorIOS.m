@@ -268,14 +268,17 @@ CGFloat	__ccSoftScaleFactor = 1;
 	if( view != openGLView_ ) {
 
 		[super setOpenGLView:view];
-
-        [self updateWinSize];
-
-        [self updateContentScaleFactor];
-
-		CCTouchDispatcher *touchDispatcher = [CCTouchDispatcher sharedDispatcher];
-//		[openGLView_ setTouchDelegate: touchDispatcher];
-		[touchDispatcher setDispatchEvents: YES];
+        
+        if (view != nil)
+        {
+            [self updateWinSize];
+            
+            [self updateContentScaleFactor];
+            
+            CCTouchDispatcher *touchDispatcher = [CCTouchDispatcher sharedDispatcher];
+            //		[openGLView_ setTouchDelegate: touchDispatcher];
+            [touchDispatcher setDispatchEvents: YES];
+        }
 	}
 }
 
