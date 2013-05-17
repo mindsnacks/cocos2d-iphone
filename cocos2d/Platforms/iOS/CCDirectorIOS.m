@@ -392,11 +392,11 @@ CGFloat	__ccSoftScaleFactor = 1;
     return uiPoint;
 }
 
-// get the current size of the glview
 -(CGSize) winSize
 {
-    // Does this work for landscape?
-    return [UIScreen mainScreen].applicationFrame.size;
+    CGSize applicationFrameSize = [UIScreen mainScreen].applicationFrame.size;
+
+    return UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation) ? applicationFrameSize : CGSizeMake(applicationFrameSize.height, applicationFrameSize.width);
 }
 
 -(CGSize) winSizeInPixels
