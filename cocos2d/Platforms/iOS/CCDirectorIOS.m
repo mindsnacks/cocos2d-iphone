@@ -195,7 +195,7 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 	totalFrames_++;
 
-	[openGLView_ swapBuffers];
+//	[openGLView_ swapBuffers];
 }
 
 -(void) setProjection:(ccDirectorProjection)projection
@@ -274,7 +274,7 @@ CGFloat	__ccSoftScaleFactor = 1;
         [self updateContentScaleFactor];
 
 		CCTouchDispatcher *touchDispatcher = [CCTouchDispatcher sharedDispatcher];
-		[openGLView_ setTouchDelegate: touchDispatcher];
+//		[openGLView_ setTouchDelegate: touchDispatcher];
 		[touchDispatcher setDispatchEvents: YES];
 	}
 }
@@ -395,15 +395,8 @@ CGFloat	__ccSoftScaleFactor = 1;
 // get the current size of the glview
 -(CGSize) winSize
 {
-	CGSize s = winSizeInPoints_;
-
-	if( deviceOrientation_ == CCDeviceOrientationLandscapeLeft || deviceOrientation_ == CCDeviceOrientationLandscapeRight ) {
-		// swap x,y in landscape mode
-		CGSize tmp = s;
-		s.width = tmp.height;
-		s.height = tmp.width;
-	}
-	return s;
+    // Does this work for landscape?
+    return [UIScreen mainScreen].applicationFrame.size;
 }
 
 -(CGSize) winSizeInPixels
@@ -523,7 +516,7 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 - (BOOL) canRender
 {
-    return animationTimer != nil;
+    return YES; // what?
 }
 
 -(void) mainLoop
@@ -765,7 +758,7 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 - (BOOL) canRender
 {
-    return displayLink != nil;
+    return YES; // wut?
 }
 
 -(void) mainLoop:(id)sender

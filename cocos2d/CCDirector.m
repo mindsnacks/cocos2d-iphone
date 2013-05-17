@@ -190,11 +190,11 @@ static CCDirector *_sharedDirector = nil;
 
     //only set depth test if there is a depth buffer
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
-    if (openGLView_ && [openGLView_ depthFormat] != 0)
-    {
-        [self setDepthTest: YES];
-    }
-    else [self setDepthTest:NO];
+//    if (openGLView_ && [openGLView_ depthFormat] != 0)
+//    {
+//        [self setDepthTest: YES];
+//    }
+//    else [self setDepthTest:NO];
 #endif
 
 	[self setProjection: projection_];
