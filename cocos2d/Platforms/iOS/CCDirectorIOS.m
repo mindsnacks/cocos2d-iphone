@@ -253,12 +253,10 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 -(void) updateWinSize
 {
-    if( openGLView_ )
-    {
-        CGSize size = [openGLView_ bounds].size;
-        winSizeInPoints_ = CGSizeMake(size.width / CC_SOFT_SCALE_FACTOR(),
-                                      size.height / CC_SOFT_SCALE_FACTOR());
-    }
+    CGSize applicationFrameSize = [UIScreen mainScreen].applicationFrame.size;
+    winSizeInPoints_ = CGSizeMake(applicationFrameSize.width / CC_SOFT_SCALE_FACTOR(),
+                                  applicationFrameSize.height / CC_SOFT_SCALE_FACTOR());
+    
 	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * CC_CONTENT_SCALE_FACTOR(),
                                   winSizeInPoints_.height * CC_CONTENT_SCALE_FACTOR());
 }
@@ -397,9 +395,15 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 -(CGSize) winSize
 {
-    CGSize applicationFrameSize = [UIScreen mainScreen].applicationFrame.size;
+    CGSize s = winSizeInPoints_;
 
-    return UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation) ? applicationFrameSize : CGSizeMake(applicationFrameSize.height, applicationFrameSize.width);
+	if( deviceOrientation_ == CCDeviceOrientationLandscapeLeft || deviceOrientation_ == CCDeviceOrientationLandscapeRight ) {
+		// swap x,y in landscape mode
+		CGSize tmp = s;
+		s.width = tmp.height;
+		s.height = tmp.width;
+	}
+	return s;
 }
 
 -(CGSize) winSizeInPixels
