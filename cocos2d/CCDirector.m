@@ -373,11 +373,20 @@ static CCDirector *_sharedDirector = nil;
 {
 	NSAssert( scene != nil, @"Argument must be non-nil");
 
-	NSUInteger index = [scenesStack_ count];
+    const NSUInteger sceneCount = [scenesStack_ count];
 
-	sendCleanupToScene_ = YES;
-	[scenesStack_ replaceObjectAtIndex:index-1 withObject:scene];
-	nextScene_ = scene;	// nextScene_ is a weak ref
+    if (sceneCount > 0)
+    {
+        NSUInteger index = sceneCount - 1;
+        sendCleanupToScene_ = YES;
+        [scenesStack_ replaceObjectAtIndex:index withObject:scene];
+
+        nextScene_ = scene;	// nextScene_ is a weak ref
+    }
+    else
+    {
+        [self pushScene:scene];
+    }
 }
 
 - (void) pushScene: (CCScene*) scene
