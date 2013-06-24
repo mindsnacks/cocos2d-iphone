@@ -401,7 +401,10 @@ static CCDirector *_sharedDirector = nil;
 
 -(void) popScene
 {
-	NSAssert( runningScene_ != nil, @"A running Scene is needed");
+    if (!runningScene_)
+    {
+        return;
+    }
 
 	[scenesStack_ removeLastObject];
 	NSUInteger c = [scenesStack_ count];
