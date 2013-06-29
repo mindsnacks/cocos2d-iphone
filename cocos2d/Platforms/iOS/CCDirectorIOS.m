@@ -134,6 +134,8 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 		// running thread is main thread on iOS
 		runningThread_ = [NSThread currentThread];
+
+        [self updateWinSize];
 	}
 
 	return self;
