@@ -244,11 +244,12 @@ static CCDirector *_sharedDirector = nil;
 		dt = MAX(0,dt);
 	}
 
-#ifdef DEBUG
+//#ifdef DEBUG
 	// If we are debugging our code, prevent big delta time
+    // Javi: This was only done on debug, but it's necessary so that pausing the game doesn't cause it to advance (APP-2206)
 	if( dt > 0.2f )
 		dt = 1/60.0f;
-#endif
+//#endif
 
 	lastUpdate_ = now;
 }
