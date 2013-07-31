@@ -72,7 +72,6 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 @implementation CCDirector (iOSExtensionClassMethods)
 
-
 +(Class) defaultDirector
 {
 	return [CCDirectorTimer class];
@@ -115,6 +114,9 @@ CGFloat	__ccSoftScaleFactor = 1;
 #pragma mark CCDirectorIOS
 
 @interface CCDirectorIOS ()
+{
+    CGSize _viewSize;
+}
 -(void) updateContentScaleFactor;
 - (void) releaseTouchDispatcher;
 @end
@@ -172,8 +174,6 @@ CGFloat	__ccSoftScaleFactor = 1;
 		[self setNextScene];
 
 	glPushMatrix();
-
-	[self applyOrientation];
 
 	// By default enable VertexArray, ColorArray, TextureCoordArray and Texture2D
 	CC_ENABLE_DEFAULT_GL_STATES();
@@ -255,9 +255,9 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 -(void) updateWinSize
 {
-    CGSize applicationFrameSize = [UIScreen mainScreen].applicationFrame.size;
-    winSizeInPoints_ = CGSizeMake(applicationFrameSize.width / CC_SOFT_SCALE_FACTOR(),
-                                  applicationFrameSize.height / CC_SOFT_SCALE_FACTOR());
+    CGSize viewSize = _viewSize;
+    winSizeInPoints_ = CGSizeMake(viewSize.width / CC_SOFT_SCALE_FACTOR(),
+                                  viewSize.height / CC_SOFT_SCALE_FACTOR());
     
 	winSizeInPixels_ = CGSizeMake(winSizeInPoints_.width * CC_CONTENT_SCALE_FACTOR(),
                                   winSizeInPoints_.height * CC_CONTENT_SCALE_FACTOR());
@@ -395,17 +395,11 @@ CGFloat	__ccSoftScaleFactor = 1;
     return uiPoint;
 }
 
--(CGSize) winSize
+- (void)setViewSize:(CGSize)viewSize
 {
-    CGSize s = winSizeInPoints_;
+    _viewSize = viewSize;
 
-	if( deviceOrientation_ == CCDeviceOrientationLandscapeLeft || deviceOrientation_ == CCDeviceOrientationLandscapeRight ) {
-		// swap x,y in landscape mode
-		CGSize tmp = s;
-		s.width = tmp.height;
-		s.height = tmp.width;
-	}
-	return s;
+    [self updateWinSize];
 }
 
 -(CGSize) winSizeInPixels
@@ -425,57 +419,8 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 - (void) setDeviceOrientation:(ccDeviceOrientation) orientation
 {
-	if( deviceOrientation_ != orientation ) {
-		deviceOrientation_ = orientation;
-		switch( deviceOrientation_) {
-			case CCDeviceOrientationPortrait:
-				[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortrait animated:NO];
-				break;
-			case CCDeviceOrientationPortraitUpsideDown:
-				[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationPortraitUpsideDown animated:NO];
-				break;
-			case CCDeviceOrientationLandscapeLeft:
-				[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeRight animated:NO];
-				break;
-			case CCDeviceOrientationLandscapeRight:
-				[[UIApplication sharedApplication] setStatusBarOrientation: UIInterfaceOrientationLandscapeLeft animated:NO];
-				break;
-			default:
-				NSLog(@"Director: Unknown device orientation");
-				break;
-		}
-	}
-}
-
--(void) applyOrientation
-{
-	CGSize s = winSizeInPixels_;
-	float w = s.width / 2;
-	float h = s.height / 2;
-
-	// XXX it's using hardcoded values.
-	// What if the the screen size changes in the future?
-	switch ( deviceOrientation_ ) {
-		case CCDeviceOrientationPortrait:
-			// nothing
-			break;
-		case CCDeviceOrientationPortraitUpsideDown:
-			// upside down
-			glTranslatef(w,h,0);
-			glRotatef(180,0,0,1);
-			glTranslatef(-w,-h,0);
-			break;
-		case CCDeviceOrientationLandscapeRight:
-			glTranslatef(w,h,0);
-			glRotatef(90,0,0,1);
-			glTranslatef(-h,-w,0);
-			break;
-		case CCDeviceOrientationLandscapeLeft:
-			glTranslatef(w,h,0);
-			glRotatef(-90,0,0,1);
-			glTranslatef(-h,-w,0);
-			break;
-	}
+    // Hacked so that Cocos believes it's always on portrait and doesn't apply weird transforms.
+	return;
 }
 
 - (void) releaseTouchDispatcher

@@ -111,13 +111,12 @@ typedef enum {
  */
 @interface CCDirector (iOSExtension)
 
-// rotates the screen if an orientation differnent than Portrait is used
--(void) applyOrientation;
-
 /** Sets the device orientation.
  If the orientation is going to be controlled by an UIViewController, then the orientation should be Portrait
  */
 -(void) setDeviceOrientation:(ccDeviceOrientation)orientation;
+
+- (void)setViewSize:(CGSize)viewSize;
 
 /** returns the device orientation */
 -(ccDeviceOrientation) deviceOrientation;
