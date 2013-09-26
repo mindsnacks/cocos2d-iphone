@@ -90,7 +90,7 @@ static NSBundle *g_defaultBundle;
                                      nil] retain];
         
         // Resolutions will be attempted in the following order for each device type.
-        g_resolutionsByDevice = [[NSDictionary dictionaryWithObjectsAndKeys:
+        g_resolutionsByDevice = [[NSMutableDictionary dictionaryWithObjectsAndKeys:
                                   @[
                                   @(kCCResolutioniPad),
                                   @(kCCResolutioniPhoneRetinaDisplay)
