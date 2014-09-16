@@ -321,7 +321,7 @@ CGFloat	__ccSoftScaleFactor = 1;
 
 -(BOOL) enableRetinaDisplay:(BOOL)retinaScaling ipad2xSoftScaling:(BOOL)ipadSoftScaling
 {
-    float osScale = retinaScaling ? [[UIScreen mainScreen] scale] : 1;
+    float osScale = retinaScaling ? MIN([[UIScreen mainScreen] scale], 2.0) : 1;
     float softScale = (ipadSoftScaling && (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)) ? 2 : 1;
     
     [self setOSScaleFactor:osScale softScaleFactor:softScale];
