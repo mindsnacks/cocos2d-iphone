@@ -317,7 +317,7 @@ static CCSpriteFrameCache *sharedSpriteFrameCache_=nil;
 
 	for (NSString *spriteFrameKey in spriteFrames_)
 	{
-		if ([[[spriteFrames_ valueForKey:spriteFrameKey] texture] isEqual:texture])
+		if ([((CCTexture2D *)[[spriteFrames_ valueForKey:spriteFrameKey] texture]) isEqual:texture])
 			[keysToRemove addObject:spriteFrameKey];
 
 	}
