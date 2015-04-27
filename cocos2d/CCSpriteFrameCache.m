@@ -317,7 +317,8 @@ static CCSpriteFrameCache *sharedSpriteFrameCache_=nil;
 
 	for (NSString *spriteFrameKey in spriteFrames_)
 	{
-		if ([[spriteFrames_ valueForKey:spriteFrameKey] texture] == texture)
+        const BOOL isSameTexture = [[spriteFrames_ valueForKey:spriteFrameKey] texture] == texture;
+		if (isSameTexture)
 			[keysToRemove addObject:spriteFrameKey];
 
 	}
